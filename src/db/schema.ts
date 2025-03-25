@@ -1,9 +1,10 @@
-import { pgTable as table, varchar, timestamp, index } from "drizzle-orm/pg-core";
+import { pgTable as table, varchar, timestamp, index, serial } from "drizzle-orm/pg-core";
 
 export const contacts = table(
   "contacts",
   {
-    email: varchar("email", { length: 255 }).notNull().unique().primaryKey(),
+    id: serial("id").primaryKey(),
+    email: varchar("email", { length: 255 }).notNull().unique(),
     firstName: varchar("first_name", { length: 255 }).notNull(),
     lastName: varchar("last_name", { length: 255 }).notNull(),
     createdAt: timestamp("created_at").defaultNow(),

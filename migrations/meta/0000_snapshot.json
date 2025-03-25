@@ -1,5 +1,5 @@
 {
-  "id": "7e2ccec4-f289-4f74-a7e2-2b4cb3dedf62",
+  "id": "b08d54d1-e36f-4eed-9efd-426739ab5138",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -8,10 +8,16 @@
       "name": "contacts",
       "schema": "",
       "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
         "email": {
           "name": "email",
           "type": "varchar(255)",
-          "primaryKey": true,
+          "primaryKey": false,
           "notNull": true
         },
         "first_name": {
