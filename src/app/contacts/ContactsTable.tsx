@@ -5,7 +5,7 @@ import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState } from "react";
 import type { Contact } from "@/db";
 import Pagination from "./Pagination";
-import { getContactsWithPagination } from "@/app/actions";
+import { getContactsWithPagination } from "./actions";
 import { debounce } from "@/lib/debounce";
 
 // Create a column helper
