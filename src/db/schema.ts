@@ -11,3 +11,4 @@ export const contacts = table(
   },
   (table) => [index("first_name_idx").on(table.firstName), index("last_name_idx").on(table.lastName)]
 );
+export type Contact = typeof contacts.$inferSelect;
