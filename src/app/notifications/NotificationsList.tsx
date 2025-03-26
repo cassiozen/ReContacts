@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { notifications } from "@/db/schema";
 import { dismissNotification } from "./actions";
+import { Button } from "@/components/ui";
 
 type NotificationsListProps = {
   notifications: typeof notifications.$inferSelect[];
@@ -31,12 +32,13 @@ export default function NotificationsList({ notifications: initialNotifications 
                 {new Date(notification.createdAt!).toLocaleString()}
               </p>
             </div>
-            <button
+            <Button
+              variant="secondary"
               onClick={() => handleDismiss(notification.id)}
-              className="px-3 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md text-sm dark:text-gray-300"
+              className="px-3 py-1 text-sm"
             >
               Dismiss
-            </button>
+            </Button>
           </div>
         </li>
       ))}

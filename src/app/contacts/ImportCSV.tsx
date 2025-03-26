@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import Papa from "papaparse";
 import Link from "next/link";
 import { importContacts } from "./actions";
+import { Button, Select } from "@/components/ui";
 
 type FieldMapping = {
   firstName: string | null;
@@ -119,9 +120,9 @@ export default function ImportCSV() {
 
   return (
     <div className="mt-4">
-      <button onClick={handleButtonClick} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
+      <Button onClick={handleButtonClick} variant="primary">
         Import CSV
-      </button>
+      </Button>
 
       {isImporting && (
         <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
@@ -156,89 +157,47 @@ export default function ImportCSV() {
 
                   <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          First Name
-                        </label>
-                        <select
-                          name="firstName"
-                          className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={fieldMapping.firstName || ""}
-                          onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
-                          required
-                        >
-                          <option value="" disabled>
-                            Select column
-                          </option>
-                          {parsedHeaders.map((header) => (
-                            <option key={`first-${header}`} value={header}>
-                              {header}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <Select
+                        name="firstName"
+                        label="First Name"
+                        value={fieldMapping.firstName || ""}
+                        onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
+                        options={parsedHeaders.map((header) => ({ value: header, label: header }))}
+                        required
+                        placeholder="Select column"
+                      />
 
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-                          Last Name
-                        </label>
-                        <select
-                          name="lastName"
-                          className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={fieldMapping.lastName || ""}
-                          onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
-                          required
-                        >
-                          <option value="" disabled>
-                            Select column
-                          </option>
-                          {parsedHeaders.map((header) => (
-                            <option key={`last-${header}`} value={header}>
-                              {header}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <Select
+                        name="lastName"
+                        label="Last Name"
+                        value={fieldMapping.lastName || ""}
+                        onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
+                        options={parsedHeaders.map((header) => ({ value: header, label: header }))}
+                        required
+                        placeholder="Select column"
+                      />
 
-                      <div>
-                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Email</label>
-                        <select
-                          name="email"
-                          className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                          value={fieldMapping.email || ""}
-                          onChange={(e) => handleMappingChange("email", e.target.value || null)}
-                          required
-                        >
-                          <option value="" disabled>
-                            Select column
-                          </option>
-                          {parsedHeaders.map((header) => (
-                            <option key={`email-${header}`} value={header}>
-                              {header}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <Select
+                        name="email"
+                        label="Email"
+                        value={fieldMapping.email || ""}
+                        onChange={(e) => handleMappingChange("email", e.target.value || null)}
+                        options={parsedHeaders.map((header) => ({ value: header, label: header }))}
+                        required
+                        placeholder="Select column"
+                      />
                     </div>
                   </div>
                 </div>
               )}
 
               <div className="flex justify-end space-x-2">
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md"
-                >
+                <Button type="button" variant="secondary" onClick={handleClose}>
                   Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={!areHeadersMapped()}
-                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                </Button>
+                <Button type="submit" disabled={!areHeadersMapped()}>
                   Import
-                </button>
+                </Button>
               </div>
             </div>
           </div>

@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui";
+
 type PaginationProps = {
   currentPage: number;
   totalPages: number;
@@ -33,28 +35,22 @@ export default function Pagination({
   return (
     <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 mt-4">
       <div className="flex flex-1 justify-between sm:hidden">
-        <button
+        <Button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={isDisabled}
-          className={`relative inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium ${
-            isDisabled
-              ? "text-gray-300 dark:text-gray-500 cursor-not-allowed"
-              : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-          }`}
+          variant="secondary"
+          className="text-sm"
         >
           Previous
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={isLastDisabled}
-          className={`relative ml-3 inline-flex items-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 px-4 py-2 text-sm font-medium ${
-            isLastDisabled
-              ? "text-gray-300 dark:text-gray-500 cursor-not-allowed"
-              : "text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
-          }`}
+          variant="secondary"
+          className="text-sm ml-3"
         >
           Next
-        </button>
+        </Button>
       </div>
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div className="flex items-center space-x-4">
@@ -76,14 +72,11 @@ export default function Pagination({
         </div>
         <div>
           <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
-            <button
+            <Button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={isDisabled}
-              className={`relative inline-flex items-center rounded-l-md px-2 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 ${
-                isDisabled
-                  ? "text-gray-300 dark:text-gray-500 cursor-not-allowed"
-                  : "text-gray-400 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600"
-              }`}
+              variant="secondary"
+              className="rounded-l-md rounded-r-none px-2 py-2 border-r-0"
             >
               <span className="sr-only">Previous</span>
               <svg
@@ -99,15 +92,12 @@ export default function Pagination({
                   clipRule="evenodd"
                 />
               </svg>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => onPageChange(currentPage + 1)}
               disabled={isLastDisabled}
-              className={`relative inline-flex items-center rounded-r-md px-2 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 ${
-                isLastDisabled
-                  ? "text-gray-300 dark:text-gray-500 cursor-not-allowed"
-                  : "text-gray-400 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-600"
-              }`}
+              variant="secondary"
+              className="rounded-r-md rounded-l-none px-2 py-2"
             >
               <span className="sr-only">Next</span>
               <svg
@@ -123,7 +113,7 @@ export default function Pagination({
                   clipRule="evenodd"
                 />
               </svg>
-            </button>
+            </Button>
           </nav>
         </div>
       </div>
