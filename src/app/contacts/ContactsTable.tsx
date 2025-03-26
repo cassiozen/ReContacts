@@ -2,11 +2,10 @@
 
 import { createColumnHelper, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import type { Contact } from "@/db";
 import Pagination from "./Pagination";
 import { getContactsWithPagination } from "./actions";
-import { debounce } from "@/lib/debounce";
 
 // Create a column helper
 const columnHelper = createColumnHelper<Contact>();
@@ -16,17 +15,17 @@ const columns = [
   columnHelper.accessor("id", {
     cell: (info) => info.getValue(),
     header: "ID",
-    size: 60,
+    size: 80,
   }),
   columnHelper.accessor("firstName", {
     cell: (info) => info.getValue(),
     header: "First Name",
-    size: 180,
+    size: 170,
   }),
   columnHelper.accessor("lastName", {
     cell: (info) => info.getValue(),
     header: "Last Name",
-    size: 180,
+    size: 170,
   }),
   columnHelper.accessor("email", {
     cell: (info) => info.getValue(),
@@ -104,29 +103,21 @@ export default function ContactsTable({
     }
   };
 
-  const handleReset = useMemo(
-    () =>
-      debounce(async (newLimit: number) => {
-        setLoading(true);
-        try {
-          // Reset to first page when limit changes
-          const result = await getContactsWithPagination(newLimit, 0);
-          setData(result.contacts);
-          setOffset(0);
-          setTotalItems(result.totalCount);
-        } catch (error) {
-          console.error("Error fetching contacts:", error);
-        } finally {
-          setLoading(false);
-        }
-      }, 300),
-    [setLoading, setData, setOffset, setTotalItems]
-  );
-
   // Handle limit change
   const handleLimitChange = async (newLimit: number) => {
     setLimit(newLimit);
-    handleReset(newLimit);
+    setLoading(true);
+    try {
+      // Reset to first page when limit changes
+      const result = await getContactsWithPagination(newLimit, 0);
+      setData(result.contacts);
+      setOffset(0);
+      setTotalItems(result.totalCount);
+    } catch (error) {
+      console.error("Error fetching contacts:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -215,6 +206,7 @@ export default function ContactsTable({
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}
         isLoading={loading}
+        totalItems={totalItems}
       />
     </div>
   );

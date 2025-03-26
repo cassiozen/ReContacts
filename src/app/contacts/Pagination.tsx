@@ -1,6 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui";
+import { debounce } from "@/lib/debounce";
+import { useMemo, useState } from "react";
 
 type PaginationProps = {
   currentPage: number;
@@ -10,6 +12,7 @@ type PaginationProps = {
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   isLoading?: boolean;
+  totalItems?: number;
 };
 
 export default function Pagination({
@@ -19,48 +22,95 @@ export default function Pagination({
   onPageChange,
   onLimitChange,
   isLoading = false,
+  totalItems = 0,
 }: PaginationProps) {
+  const [pageInput, setPageInput] = useState(currentPage.toString());
+  const [limitInput, setLimitInput] = useState(limit.toString());
+
+  // Update inputs when props change
+  useMemo(() => {
+    setPageInput(currentPage.toString());
+    setLimitInput(limit.toString());
+  }, [currentPage, limit]);
   const isFirstPage = currentPage === 1;
   const isLastPage = currentPage === totalPages || totalPages === 0;
   const isDisabled = isLoading || isFirstPage;
   const isLastDisabled = isLoading || isLastPage;
 
+  const debouncedPageChange = useMemo(
+    () =>
+      debounce((page: number) => {
+        if (page > 0 && page <= totalPages) {
+          onPageChange(page);
+        }
+      }, 350),
+    [onPageChange, totalPages]
+  );
+
+  const handlePageInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPageInput(e.target.value);
+    const page = parseInt(e.target.value);
+    if (!isNaN(page)) {
+      debouncedPageChange(page);
+    }
+  };
+
+  const debouncedLimitChange = useMemo(
+    () =>
+      debounce((newLimit: number) => {
+        if (newLimit > 0) {
+          onLimitChange(newLimit);
+        }
+      }, 350),
+    [onLimitChange]
+  );
+
   const handleLimitChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newLimit = parseInt(e.target.value);
+    const value = e.target.value;
+    setLimitInput(value);
+
+    const newLimit = parseInt(value);
     if (!isNaN(newLimit) && newLimit > 0) {
-      onLimitChange(newLimit);
+      debouncedLimitChange(newLimit);
     }
   };
 
   return (
     <div className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 mt-2 w-full">
-      <div className="flex flex-1 items-center sm:justify-between">
-        <div className="flex items-center">
-          {/* Fixed-width container for pagination info to prevent movement */}
-          <div className="w-48">
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              Page <span className="font-medium">{currentPage}</span> of{" "}
-              <span className="font-medium">{totalPages || 1}</span>
-            </span>
-          </div>
-
-          {/* Fixed position for limit controls */}
-          <div className="flex items-center space-x-2 ml-4">
-            <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Per Page:</span>
+      <div className="flex flex-1 flex-col sm:flex-row items-center justify-between">
+        {/* Additional info showing displayed range */}
+        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          Showing {isFirstPage ? 1 : (currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalItems)} of{" "}
+          {totalItems.toLocaleString()} records
+        </div>
+        <div className="flex items-center space-x-6">
+          {/* Per page controls */}
+          <div className="flex items-center">
+            <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Per Page:</span>{" "}
             <input
               type="number"
               min="10"
               step="10"
-              value={limit}
+              value={limitInput}
               disabled={isLoading}
               onChange={handleLimitChange}
               className="w-16 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 sm:text-sm p-1"
             />
           </div>
-        </div>
+          <div>
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Page{" "}
+              <input
+                type="text"
+                value={pageInput}
+                onChange={handlePageInputChange}
+                className="w-12 inline-block text-center font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 sm:text-sm p-1"
+              />{" "}
+              of <span className="font-medium">{totalPages || 1}</span>
+            </span>
+          </div>
 
-        <div>
-          <nav className="isolate inline-flex rounded-md shadow-sm" aria-label="Pagination">
+          <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
             <Button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={isDisabled}
