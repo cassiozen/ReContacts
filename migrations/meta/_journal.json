@@ -8,6 +8,13 @@
       "when": 1742920418142,
       "tag": "0000_flashy_jubilee",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743003393492,
+      "tag": "0001_good_titania",
+      "breakpoints": true
     }
   ]
 }

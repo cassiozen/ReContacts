@@ -1,6 +1,6 @@
 CREATE TABLE "contacts" (
 	"id" serial PRIMARY KEY NOT NULL,
-	"email" varchar(255) PRIMARY KEY NOT NULL,
+	"email" varchar(255) NOT NULL,
 	"first_name" varchar(255) NOT NULL,
 	"last_name" varchar(255) NOT NULL,
 	"created_at" timestamp DEFAULT now(),

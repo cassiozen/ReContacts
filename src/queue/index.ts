@@ -1,9 +1,12 @@
 import Queue from "better-queue";
 import MemoryStore from "better-queue-memory";
 import Papa from "papaparse";
-import db, { contacts } from "@/db";
+import db, { contacts, notifications } from "@/db";
+import { getErrorMessage } from "@/lib/errorMessage";
+import { sql } from "drizzle-orm";
 
 type InsertCSVTask = {
+  id: string;
   csv: NodeJS.ReadableStream;
   firstNameColumn: string;
   lastNameColumn: string;
@@ -12,35 +15,67 @@ type InsertCSVTask = {
 
 export const insertCSVQueue = new Queue<InsertCSVTask, boolean>(
   async (task: InsertCSVTask, cb) => {
+    await db.insert(notifications).values({ type: "CSV_import", content: `Started processing ${task.id}` });
+    let insertionsCount = 0;
+
     Papa.parse<Record<PropertyKey, string>>(task.csv, {
       header: true, // Assumes first row contains headers
       skipEmptyLines: true,
 
       // Process data in chunks as it's parsed
       chunk: async (results, parser) => {
-        console.log(`Processing chunk with ${results.data.length} rows`);
+        // Skip eventual empty chunks
+        if (results.data.length === 0) return;
+
         const insertionData = results.data.map((entry) => ({
           firstName: entry[task.firstNameColumn],
           lastName: entry[task.lastNameColumn],
           email: entry[task.emailColumn],
         }));
+
+        // We're being conservative here and completely pausing processing
+        // while the database is inserting, which works for out constraints.
         parser.pause();
 
         try {
-          await db.insert(contacts).values(insertionData).onConflictDoNothing();
+          const result = await db
+            .insert(contacts)
+            .values(insertionData)
+            .onConflictDoUpdate({
+              target: contacts.email,
+              set: {
+                firstName: sql`excluded.first_name`,
+                lastName: sql`excluded.last_name`,
+                updatedAt: sql`NOW()`,
+              },
+            });
+          console.log(result);
+          insertionsCount += result.rowCount ?? 0;
         } catch (error) {
-          console.log(error);
+          console.error(error);
+          // Notify user and carry on
+          await db
+            .insert(notifications)
+            .values({ type: "CSV_import", content: `Errors while processing ${task.id}: ${getErrorMessage(error)}` });
         } finally {
-          setTimeout(() => parser.resume(), 1000);
+          parser.resume();
         }
       },
 
-      complete: () => {
-        console.log(`Parsing complete.`);
+      complete: async () => {
+        await db.insert(notifications).values({
+          type: "CSV_import",
+          content: `Finished processing ${task.id}: ${insertionsCount} contacts added.`,
+        });
         cb(undefined, true);
       },
 
-      error: (error) => {
+      error: async (error) => {
+        console.error(error);
+        await db.insert(notifications).values({
+          type: "CSV_import",
+          content: `Fatal Error - Couldn't finish processing ${task.id}: ${getErrorMessage(error)}`,
+        });
         cb(error);
       },
     });

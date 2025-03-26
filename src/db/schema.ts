@@ -1,4 +1,4 @@
-import { pgTable as table, varchar, timestamp, index, serial } from "drizzle-orm/pg-core";
+import { pgTable as table, varchar, timestamp, index, serial, boolean } from "drizzle-orm/pg-core";
 
 export const contacts = table(
   "contacts",
@@ -13,3 +13,11 @@ export const contacts = table(
   (table) => [index("first_name_idx").on(table.firstName), index("last_name_idx").on(table.lastName)]
 );
 export type Contact = typeof contacts.$inferSelect;
+
+export const notifications = table("notifications", {
+  id: serial("id").primaryKey(),
+  type: varchar("type", { length: 50 }).notNull().$type<"CSV_import">(), // Allow for other types of notification in the future
+  dismissed: boolean("dismissed").notNull().default(false),
+  content: varchar("content", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});

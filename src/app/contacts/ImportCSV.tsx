@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Papa from "papaparse";
+import Link from "next/link";
 import { importContacts } from "./actions";
 
 type FieldMapping = {
@@ -19,6 +20,7 @@ const commonFieldNames = {
 
 export default function ImportCSV() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [parsedHeaders, setParsedHeaders] = useState<string[]>([]);
   const [fieldMapping, setFieldMapping] = useState<FieldMapping>({
     firstName: null,
@@ -106,12 +108,38 @@ export default function ImportCSV() {
     return fieldMapping.firstName !== null && fieldMapping.lastName !== null && fieldMapping.email !== null;
   };
 
+  const handleFormSubmit = async (formData: FormData) => {
+    await importContacts(formData);
+    setIsDialogOpen(false);
+    setIsImporting(true);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <div className="mt-4">
       <button onClick={handleButtonClick} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
         Import CSV
       </button>
-      <form action={importContacts}>
+
+      {isImporting && (
+        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
+          <h3 className="text-green-800 font-medium">CSV Import Scheduled</h3>
+          <p className="text-green-700 mt-1">
+            Your CSV file is being processed in the background. You can safely navigate away or close your browser.
+          </p>
+          <p className="text-green-700 mt-2">
+            Check the{" "}
+            <Link href="/notifications" className="text-blue-600 hover:underline font-medium">
+              notifications page
+            </Link>{" "}
+            for updates on the import process.
+          </p>
+        </div>
+      )}
+
+      <form action={handleFormSubmit}>
         <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
         {isDialogOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

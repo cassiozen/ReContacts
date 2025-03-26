@@ -26,6 +26,7 @@ export async function importContacts(formData: FormData) {
   const nodeStream = Readable.fromWeb(csvFile.stream());
 
   insertCSVQueue.push({
+    id: csvFile.name,
     csv: nodeStream,
     firstNameColumn: formData.get("firstName") as string,
     lastNameColumn: formData.get("lastName") as string,
