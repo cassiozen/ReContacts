@@ -13,8 +13,8 @@ type FieldMapping = {
 
 // Common field names for automatic column matching
 const commonFieldNames = {
-  firstName: ["first name", "firstname", "first", "given name", "givenname", "forename", "name"],
-  lastName: ["last name", "lastname", "last", "surname", "family name", "familyname"],
+  firstName: ["first name", "firstname", "first_name", "first", "given name", "givenname", "forename", "name"],
+  lastName: ["last name", "lastname", "last_name", "last", "surname", "family name", "familyname"],
   email: ["email", "email address", "emailaddress", "e-mail"],
 };
 
@@ -143,63 +143,82 @@ export default function ImportCSV() {
         <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
         {isDialogOpen && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
-              <h3 className="text-lg font-semibold mb-4">Import Contacts from CSV</h3>
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full shadow-xl">
+              <h3 className="text-lg font-semibold mb-4 border-b pb-2 text-gray-800 dark:text-gray-200">
+                Import Contacts from CSV
+              </h3>
 
               {parsedHeaders && (
                 <div className="mb-6">
-                  <h4 className="font-medium mb-2">Map CSV columns to contact fields</h4>
+                  <h4 className="font-medium mb-2 text-gray-700 dark:text-gray-300">
+                    Map the contact fields to the CSV columns
+                  </h4>
 
-                  <div className="grid grid-cols-1 gap-4">
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">First Name</label>
-                      <select
-                        name="firstName"
-                        className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                        value={fieldMapping.firstName || ""}
-                        onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
-                        required
-                      >
-                        {parsedHeaders.map((header) => (
-                          <option key={`first-${header}`} value={header}>
-                            {header}
+                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          First Name
+                        </label>
+                        <select
+                          name="firstName"
+                          className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          value={fieldMapping.firstName || ""}
+                          onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select column
                           </option>
-                        ))}
-                      </select>
-                    </div>
+                          {parsedHeaders.map((header) => (
+                            <option key={`first-${header}`} value={header}>
+                              {header}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">Last Name</label>
-                      <select
-                        name="lastName"
-                        className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                        value={fieldMapping.lastName || ""}
-                        onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
-                        required
-                      >
-                        {parsedHeaders.map((header) => (
-                          <option key={`last-${header}`} value={header}>
-                            {header}
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+                          Last Name
+                        </label>
+                        <select
+                          name="lastName"
+                          className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          value={fieldMapping.lastName || ""}
+                          onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select column
                           </option>
-                        ))}
-                      </select>
-                    </div>
+                          {parsedHeaders.map((header) => (
+                            <option key={`last-${header}`} value={header}>
+                              {header}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
 
-                    <div className="mb-2">
-                      <label className="block text-sm font-medium mb-1">Email</label>
-                      <select
-                        name="email"
-                        className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                        value={fieldMapping.email || ""}
-                        onChange={(e) => handleMappingChange("email", e.target.value || null)}
-                        required
-                      >
-                        {parsedHeaders.map((header) => (
-                          <option key={`email-${header}`} value={header}>
-                            {header}
+                      <div>
+                        <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">Email</label>
+                        <select
+                          name="email"
+                          className="w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                          value={fieldMapping.email || ""}
+                          onChange={(e) => handleMappingChange("email", e.target.value || null)}
+                          required
+                        >
+                          <option value="" disabled>
+                            Select column
                           </option>
-                        ))}
-                      </select>
+                          {parsedHeaders.map((header) => (
+                            <option key={`email-${header}`} value={header}>
+                              {header}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
