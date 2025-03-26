@@ -46,10 +46,11 @@ export default function Pagination({
 
           {/* Fixed position for limit controls */}
           <div className="flex items-center space-x-2 ml-4">
-            <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Limit:</span>
+            <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Per Page:</span>
             <input
               type="number"
-              min="1"
+              min="10"
+              step="10"
               value={limit}
               disabled={isLoading}
               onChange={handleLimitChange}

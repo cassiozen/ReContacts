@@ -2,7 +2,7 @@
 
 import { createColumnHelper, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { Contact } from "@/db";
 import Pagination from "./Pagination";
 import { getContactsWithPagination } from "./actions";
@@ -104,20 +104,24 @@ export default function ContactsTable({
     }
   };
 
-  const handleReset = debounce(async (newLimit: number) => {
-    setLoading(true);
-    try {
-      // Reset to first page when limit changes
-      const result = await getContactsWithPagination(newLimit, 0);
-      setData(result.contacts);
-      setOffset(0);
-      setTotalItems(result.totalCount);
-    } catch (error) {
-      console.error("Error fetching contacts:", error);
-    } finally {
-      setLoading(false);
-    }
-  }, 500);
+  const handleReset = useMemo(
+    () =>
+      debounce(async (newLimit: number) => {
+        setLoading(true);
+        try {
+          // Reset to first page when limit changes
+          const result = await getContactsWithPagination(newLimit, 0);
+          setData(result.contacts);
+          setOffset(0);
+          setTotalItems(result.totalCount);
+        } catch (error) {
+          console.error("Error fetching contacts:", error);
+        } finally {
+          setLoading(false);
+        }
+      }, 300),
+    [setLoading, setData, setOffset, setTotalItems]
+  );
 
   // Handle limit change
   const handleLimitChange = async (newLimit: number) => {
