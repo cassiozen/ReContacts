@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import Papa from "papaparse";
+import { importContacts } from "./actions";
 
 type FieldMapping = {
   firstName: string | null;
@@ -107,86 +108,95 @@ export default function ImportCSV() {
 
   return (
     <div className="mt-4">
-      <input type="file" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
       <button onClick={handleButtonClick} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md">
         Import CSV
       </button>
+      <form action={importContacts}>
+        <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
+        {isDialogOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
+              <h3 className="text-lg font-semibold mb-4">Import Contacts from CSV</h3>
 
-      {isDialogOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full">
-            <h3 className="text-lg font-semibold mb-4">Import Contacts from CSV</h3>
+              {parsedHeaders && (
+                <div className="mb-6">
+                  <h4 className="font-medium mb-2">Map CSV columns to contact fields</h4>
 
-            {parsedHeaders && (
-              <div className="mb-6">
-                <h4 className="font-medium mb-2">Map CSV columns to contact fields</h4>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="mb-2">
+                      <label className="block text-sm font-medium mb-1">First Name</label>
+                      <select
+                        name="firstName"
+                        className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        value={fieldMapping.firstName || ""}
+                        onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
+                        required
+                      >
+                        {parsedHeaders.map((header) => (
+                          <option key={`first-${header}`} value={header}>
+                            {header}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                <div className="grid grid-cols-1 gap-4">
-                  <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">First Name</label>
-                    <select
-                      className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      value={fieldMapping.firstName || ""}
-                      onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
-                    >
-                      {parsedHeaders.map((header) => (
-                        <option key={`first-${header}`} value={header}>
-                          {header}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                    <div className="mb-2">
+                      <label className="block text-sm font-medium mb-1">Last Name</label>
+                      <select
+                        name="lastName"
+                        className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        value={fieldMapping.lastName || ""}
+                        onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
+                        required
+                      >
+                        {parsedHeaders.map((header) => (
+                          <option key={`last-${header}`} value={header}>
+                            {header}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">Last Name</label>
-                    <select
-                      className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      value={fieldMapping.lastName || ""}
-                      onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
-                    >
-                      {parsedHeaders.map((header) => (
-                        <option key={`last-${header}`} value={header}>
-                          {header}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="mb-2">
-                    <label className="block text-sm font-medium mb-1">Email</label>
-                    <select
-                      className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
-                      value={fieldMapping.email || ""}
-                      onChange={(e) => handleMappingChange("email", e.target.value || null)}
-                    >
-                      {parsedHeaders.map((header) => (
-                        <option key={`email-${header}`} value={header}>
-                          {header}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="mb-2">
+                      <label className="block text-sm font-medium mb-1">Email</label>
+                      <select
+                        name="email"
+                        className="w-full p-2 border rounded-md dark:bg-gray-700 dark:border-gray-600"
+                        value={fieldMapping.email || ""}
+                        onChange={(e) => handleMappingChange("email", e.target.value || null)}
+                        required
+                      >
+                        {parsedHeaders.map((header) => (
+                          <option key={`email-${header}`} value={header}>
+                            {header}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            <div className="flex justify-end space-x-2">
-              <button
-                onClick={handleClose}
-                className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md"
-              >
-                Cancel
-              </button>
-              <button
-                disabled={!areHeadersMapped()}
-                className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Import
-              </button>
+              <div className="flex justify-end space-x-2">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={!areHeadersMapped()}
+                  className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Import
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </form>
     </div>
   );
 }
