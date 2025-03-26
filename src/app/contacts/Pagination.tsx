@@ -33,45 +33,33 @@ export default function Pagination({
   };
 
   return (
-    <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 mt-4">
-      <div className="flex flex-1 justify-between sm:hidden">
-        <Button
-          onClick={() => onPageChange(currentPage - 1)}
-          disabled={isDisabled}
-          variant="secondary"
-          className="text-sm"
-        >
-          Previous
-        </Button>
-        <Button
-          onClick={() => onPageChange(currentPage + 1)}
-          disabled={isLastDisabled}
-          variant="secondary"
-          className="text-sm ml-3"
-        >
-          Next
-        </Button>
-      </div>
-      <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
-        <div className="flex items-center space-x-4">
-          <span className="text-sm text-gray-700 dark:text-gray-300">
-            Page <span className="font-medium">{currentPage}</span> of{" "}
-            <span className="font-medium">{totalPages || 1}</span>
-          </span>
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-700 dark:text-gray-300">Limit:</span>
+    <div className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 mt-2 w-full">
+      <div className="flex flex-1 items-center sm:justify-between">
+        <div className="flex items-center">
+          {/* Fixed-width container for pagination info to prevent movement */}
+          <div className="w-48">
+            <span className="text-sm text-gray-700 dark:text-gray-300">
+              Page <span className="font-medium">{currentPage}</span> of{" "}
+              <span className="font-medium">{totalPages || 1}</span>
+            </span>
+          </div>
+
+          {/* Fixed position for limit controls */}
+          <div className="flex items-center space-x-2 ml-4">
+            <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Limit:</span>
             <input
               type="number"
               min="1"
               value={limit}
               disabled={isLoading}
               onChange={handleLimitChange}
-              className="w-16 rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 sm:text-sm"
+              className="w-16 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 sm:text-sm p-1"
             />
           </div>
         </div>
+
         <div>
-          <nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
+          <nav className="isolate inline-flex rounded-md shadow-sm" aria-label="Pagination">
             <Button
               onClick={() => onPageChange(currentPage - 1)}
               disabled={isDisabled}

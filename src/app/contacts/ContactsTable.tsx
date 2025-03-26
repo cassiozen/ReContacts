@@ -126,9 +126,9 @@ export default function ContactsTable({
   };
 
   return (
-    <div className="">
+    <div className="w-full max-w-4xl mx-auto">
       <div
-        className="rounded-md border border-gray-200 dark:border-gray-700 overflow-x-auto h-[600px] max-w-4xl relative"
+        className="rounded-md border border-gray-200 dark:border-gray-700 overflow-x-auto h-[600px] w-full relative"
         ref={tableContainerRef}
       >
         {loading && (

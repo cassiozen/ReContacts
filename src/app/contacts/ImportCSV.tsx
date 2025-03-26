@@ -119,7 +119,7 @@ export default function ImportCSV() {
   };
 
   return (
-    <div className="mt-4">
+    <div>
       <Button onClick={handleButtonClick} variant="primary">
         Import CSV
       </Button>
@@ -143,7 +143,7 @@ export default function ImportCSV() {
       <form action={handleFormSubmit}>
         <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full shadow-xl">
               <h3 className="text-lg font-semibold mb-4 border-b pb-2 text-gray-800 dark:text-gray-200">
                 Import Contacts from CSV
