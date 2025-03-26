@@ -7,7 +7,8 @@ const truncate = (str: string) => (str.length <= 1000 ? str : str.slice(0, 999) 
 
 const logger: Logger = {
   logQuery(query: string, params: unknown[]) {
-    console.log(`\x1b[34m${truncate(query)}\x1b[0m`, truncate(params.join(", ")), "\n");
+    const stringParams = params.length > 0 ? `[${truncate(params.join(", "))}]` : "";
+    console.log(" QUERY", `\x1b[34m${truncate(query)}\x1b[0m`, stringParams);
   },
 };
 
