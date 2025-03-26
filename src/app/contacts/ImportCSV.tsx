@@ -4,7 +4,7 @@ import { useState, useRef } from "react";
 import Papa from "papaparse";
 import Link from "next/link";
 import { importContacts } from "./actions";
-import { Button, Select } from "@/components/ui";
+import { Button, Select, showSuccessToast } from "@/components/ui";
 
 type FieldMapping = {
   firstName: string | null;
@@ -21,7 +21,6 @@ const commonFieldNames = {
 
 export default function ImportCSV() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isImporting, setIsImporting] = useState(false);
   const [parsedHeaders, setParsedHeaders] = useState<string[]>([]);
   const [fieldMapping, setFieldMapping] = useState<FieldMapping>({
     firstName: null,
@@ -112,7 +111,22 @@ export default function ImportCSV() {
   const handleFormSubmit = async (formData: FormData) => {
     await importContacts(formData);
     setIsDialogOpen(false);
-    setIsImporting(true);
+
+    showSuccessToast({
+      header: "CSV Import Scheduled",
+      description:
+        "Your CSV file is being processed in the background. You can safely navigate away or close your browser.",
+      footer: (
+        <>
+          Check the{" "}
+          <Link href="/notifications" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+            notifications page
+          </Link>{" "}
+          for updates on the import process.
+        </>
+      ),
+    });
+
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -123,22 +137,6 @@ export default function ImportCSV() {
       <Button onClick={handleButtonClick} variant="primary">
         Import CSV
       </Button>
-
-      {isImporting && (
-        <div className="mt-4 p-4 bg-green-50 border border-green-200 rounded-md">
-          <h3 className="text-green-800 font-medium">CSV Import Scheduled</h3>
-          <p className="text-green-700 mt-1">
-            Your CSV file is being processed in the background. You can safely navigate away or close your browser.
-          </p>
-          <p className="text-green-700 mt-2">
-            Check the{" "}
-            <Link href="/notifications" className="text-blue-600 hover:underline font-medium">
-              notifications page
-            </Link>{" "}
-            for updates on the import process.
-          </p>
-        </div>
-      )}
 
       <form action={handleFormSubmit}>
         <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
