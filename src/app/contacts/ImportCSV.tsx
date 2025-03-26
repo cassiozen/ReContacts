@@ -57,18 +57,13 @@ export default function ImportCSV() {
           // Attempt to match fields by common names
           headers.forEach((header) => {
             const headerLower = header.toLowerCase().trim();
-            // Check for firstName match
-            if (commonFieldNames.firstName.some((name) => headerLower === name)) {
-              newMapping.firstName = header;
-            }
-            // Check for lastName match
-            else if (commonFieldNames.lastName.some((name) => headerLower === name)) {
-              newMapping.lastName = header;
-            }
-            // Check for email match
-            else if (commonFieldNames.email.some((name) => headerLower === name)) {
-              newMapping.email = header;
-            }
+
+            // Check field matches using the common names dictionary
+            Object.entries(commonFieldNames).forEach(([field, names]) => {
+              if (names.includes(headerLower)) {
+                newMapping[field as keyof FieldMapping] = header;
+              }
+            });
           });
 
           setFieldMapping(newMapping);
@@ -139,7 +134,9 @@ export default function ImportCSV() {
       </Button>
 
       <form action={handleFormSubmit}>
+        {/* Hidden file input triggered by the button */}
         <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
+
         {isDialogOpen && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
             <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full shadow-xl">

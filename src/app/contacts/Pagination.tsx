@@ -8,7 +8,6 @@ type PaginationProps = {
   currentPage: number;
   totalPages: number;
   limit: number;
-  offset: number;
   onPageChange: (page: number) => void;
   onLimitChange: (limit: number) => void;
   isLoading?: boolean;
@@ -32,10 +31,6 @@ export default function Pagination({
     setPageInput(currentPage.toString());
     setLimitInput(limit.toString());
   }, [currentPage, limit]);
-  const isFirstPage = currentPage === 1;
-  const isLastPage = currentPage === totalPages || totalPages === 0;
-  const isDisabled = isLoading || isFirstPage;
-  const isLastDisabled = isLoading || isLastPage;
 
   const debouncedPageChange = useMemo(
     () =>
@@ -75,16 +70,20 @@ export default function Pagination({
     }
   };
 
+  const isFirstPage = currentPage === 1;
+  const isLastPage = currentPage === totalPages || totalPages === 0;
+
+  // Simple calculation for displaying record range
+  const startRecord = isFirstPage ? 1 : (currentPage - 1) * limit + 1;
+  const endRecord = Math.min(currentPage * limit, totalItems);
+
   return (
-    <div className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 sm:px-6 mt-2 w-full">
-      <div className="flex flex-1 flex-col sm:flex-row items-center justify-between">
-        {/* Additional info showing displayed range */}
-        <div className="text-xs text-gray-500 dark:text-gray-400 text-center">
-          Showing {isFirstPage ? 1 : (currentPage - 1) * limit + 1} - {Math.min(currentPage * limit, totalItems)} of{" "}
-          {totalItems.toLocaleString()} records
+    <div className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 mt-2 w-full">
+      <div className="flex flex-1 items-center justify-between">
+        <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
+          Showing {startRecord.toLocaleString()} - {endRecord.toLocaleString()} of {totalItems.toLocaleString()} records
         </div>
         <div className="flex items-center space-x-6">
-          {/* Per page controls */}
           <div className="flex items-center">
             <span className="text-sm text-gray-700 dark:text-gray-300 whitespace-nowrap">Per Page:</span>{" "}
             <input
@@ -94,7 +93,7 @@ export default function Pagination({
               value={limitInput}
               disabled={isLoading}
               onChange={handleLimitChange}
-              className="w-16 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 sm:text-sm p-1"
+              className="w-16 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 text-sm p-1"
             />
           </div>
           <div>
@@ -104,7 +103,7 @@ export default function Pagination({
                 type="text"
                 value={pageInput}
                 onChange={handlePageInputChange}
-                className="w-12 inline-block text-center font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 sm:text-sm p-1"
+                className="w-12 inline-block text-center font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 text-sm p-1"
               />{" "}
               of <span className="font-medium">{totalPages || 1}</span>
             </span>
@@ -113,18 +112,12 @@ export default function Pagination({
           <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
             <Button
               onClick={() => onPageChange(currentPage - 1)}
-              disabled={isDisabled}
+              disabled={isLoading || isFirstPage}
               variant="secondary"
               className="rounded-l-md rounded-r-none px-2 py-2 border-r-0"
             >
               <span className="sr-only">Previous</span>
-              <svg
-                className="h-5 w-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
+              <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M12.79 5.23a.75.75 0 01-.02 1.06L8.832 10l3.938 3.71a.75.75 0 11-1.04 1.08l-4.5-4.25a.75.75 0 010-1.08l4.5-4.25a.75.75 0 011.06.02z"
@@ -134,18 +127,12 @@ export default function Pagination({
             </Button>
             <Button
               onClick={() => onPageChange(currentPage + 1)}
-              disabled={isLastDisabled}
+              disabled={isLoading || isLastPage}
               variant="secondary"
               className="rounded-r-md rounded-l-none px-2 py-2"
             >
               <span className="sr-only">Next</span>
-              <svg
-                className="h-5 w-5"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-                fill="currentColor"
-                aria-hidden="true"
-              >
+              <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path
                   fillRule="evenodd"
                   d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z"

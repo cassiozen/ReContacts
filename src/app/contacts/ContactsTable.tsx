@@ -73,7 +73,7 @@ export default function ContactsTable({
     estimateSize: () => 33, //estimate row height for accurate scrollbar dragging
     getScrollElement: () => tableContainerRef.current,
     measureElement: (element) => element?.getBoundingClientRect().height,
-    overscan: 5,
+    overscan: 10,
   });
 
   const table = useReactTable({
@@ -126,13 +126,13 @@ export default function ContactsTable({
         className="rounded-md border border-gray-200 dark:border-gray-700 overflow-x-auto h-[600px] w-full relative"
         ref={tableContainerRef}
       >
+        {/* Loading overlay */}
         {loading && (
-          <div className="absolute inset-0 bg-white dark:bg-gray-800 bg-opacity-50 dark:bg-opacity-50 flex items-center justify-center z-20">
-            <div className="bg-white dark:bg-gray-700 p-3 rounded-full shadow-lg">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
-            </div>
+          <div className="absolute inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center z-20">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
           </div>
         )}
+
         <table className="w-full grid divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-10">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -141,9 +141,7 @@ export default function ContactsTable({
                   <th
                     key={header.id}
                     scope="col"
-                    style={{
-                      width: header.getSize(),
-                    }}
+                    style={{ width: header.getSize() }}
                     className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
                   >
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -157,7 +155,7 @@ export default function ContactsTable({
             style={{
               display: "grid",
               height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
-              position: "relative", //needed for absolute positioning of rows
+              position: "relative",
             }}
             className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700"
           >
@@ -171,26 +169,24 @@ export default function ContactsTable({
                   style={{
                     display: "flex",
                     position: "absolute",
-                    transform: `translateY(${virtualRow.start}px)`, //this should always be a `style` as it changes on scroll
+                    transform: `translateY(${virtualRow.start}px)`,
                     width: "100%",
                   }}
                   className="hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <td
-                        key={cell.id}
-                        style={{
-                          display: "flex",
-                          width: cell.column.getSize(),
-                          maxWidth: cell.column.getSize(),
-                        }}
-                        className="px-6 py-4 whitespace-nowrap truncate text-sm text-gray-500 dark:text-gray-300"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    );
-                  })}
+                  {row.getVisibleCells().map((cell) => (
+                    <td
+                      key={cell.id}
+                      style={{
+                        display: "flex",
+                        width: cell.column.getSize(),
+                        maxWidth: cell.column.getSize(),
+                      }}
+                      className="px-6 py-4 whitespace-nowrap truncate text-sm text-gray-500 dark:text-gray-300"
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </td>
+                  ))}
                 </tr>
               );
             })}
@@ -202,7 +198,6 @@ export default function ContactsTable({
         currentPage={currentPage}
         totalPages={totalPages}
         limit={limit}
-        offset={offset}
         onPageChange={handlePageChange}
         onLimitChange={handleLimitChange}
         isLoading={loading}
