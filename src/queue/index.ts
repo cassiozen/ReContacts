@@ -49,10 +49,8 @@ export const insertCSVQueue = new Queue<InsertCSVTask, boolean>(
                 updatedAt: sql`NOW()`,
               },
             });
-          console.log(result);
           insertionsCount += result.rowCount ?? 0;
         } catch (error) {
-          console.error(error);
           // Notify user and carry on
           await db
             .insert(notifications)

@@ -9,7 +9,7 @@
 @@ Others @@
 + Unit tests setup
 + Basic UI Unit tests
-- CSV Import Unit tests
++ CSV Import Unit tests
 + Table pagination Adjustments: Match width & flex with distribute space-between
 - Delivery Docs
 - TS error on better-queue-memmory & Readable.fromWeb(csvFile.stream())

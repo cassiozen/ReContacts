@@ -9,7 +9,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
   disabled?: boolean;
   className?: string;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function Button({
   variant = "primary",
@@ -18,6 +18,7 @@ export function Button({
   type = "button",
   disabled = false,
   className = "",
+  ...props
 }: ButtonProps) {
   const styles = {
     primary: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md",
@@ -30,6 +31,7 @@ export function Button({
       onClick={onClick}
       disabled={disabled}
       className={`${styles[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+      {...props}
     >
       {children}
     </button>
