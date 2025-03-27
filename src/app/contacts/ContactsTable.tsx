@@ -1,6 +1,14 @@
 "use client";
 
-import { createColumnHelper, flexRender, getCoreRowModel, Row, useReactTable } from "@tanstack/react-table";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  Row,
+  SortingState,
+  useReactTable,
+} from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState } from "react";
 import type { Contact } from "@/db";
@@ -31,6 +39,7 @@ const columns = [
     cell: (info) => info.getValue(),
     header: "Email",
     size: 280,
+    enableSorting: false,
   }),
   columnHelper.accessor("createdAt", {
     cell: (info) => {
@@ -39,6 +48,7 @@ const columns = [
     },
     header: "Created At",
     size: 200,
+    enableSorting: false,
   }),
 ];
 
@@ -60,6 +70,7 @@ export default function ContactsTable({
   const [offset, setOffset] = useState(initialOffset);
   const [loading, setLoading] = useState(false);
   const [totalItems, setTotalItems] = useState(totalCount);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   // Calculate current page and total pages
   const currentPage = Math.floor(offset / limit) + 1;
@@ -80,19 +91,30 @@ export default function ContactsTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    manualSorting: true,
+    state: {
+      sorting,
+    },
+    onSortingChange: (updaterOrValue) => {
+      const newSortingState = typeof updaterOrValue === "function" ? updaterOrValue(sorting) : updaterOrValue;
+      setSorting(newSortingState);
+      handlePageChange(1, newSortingState);
+    },
+    enableSorting: true,
   });
 
   const { rows } = table.getRowModel();
 
   // Handle page change
-  const handlePageChange = async (page: number) => {
+  const handlePageChange = async (page: number, sortingState: SortingState = sorting) => {
     if (page < 1 || page > totalPages) return;
 
     const newOffset = (page - 1) * limit;
     setLoading(true);
 
     try {
-      const result = await getContactsWithPagination(limit, newOffset);
+      const result = await getContactsWithPagination(limit, newOffset, sortingState);
       setData(result.contacts);
       setOffset(newOffset);
       setTotalItems(result.totalCount);
@@ -109,7 +131,7 @@ export default function ContactsTable({
     setLoading(true);
     try {
       // Reset to first page when limit changes
-      const result = await getContactsWithPagination(newLimit, 0);
+      const result = await getContactsWithPagination(newLimit, 0, sorting);
       setData(result.contacts);
       setOffset(0);
       setTotalItems(result.totalCount);
@@ -142,9 +164,23 @@ export default function ContactsTable({
                     key={header.id}
                     scope="col"
                     style={{ width: header.getSize() }}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider"
+                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+                      header.column.getCanSort() ? "cursor-pointer" : ""
+                    }`}
+                    onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                   >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
+                    <div className="flex items-center space-x-1 select-none group">
+                      <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
+                      {header.column.getCanSort() && (
+                        <span className="ml-1 text-gray-400">
+                          {header.column.getIsSorted() ? (
+                            { asc: " ▲", desc: " ▼" }[header.column.getIsSorted() as string]
+                          ) : (
+                            <span className="opacity-0 group-hover:opacity-50 transition-opacity"> ▲</span>
+                          )}
+                        </span>
+                      )}
+                    </div>
                   </th>
                 ))}
               </tr>
