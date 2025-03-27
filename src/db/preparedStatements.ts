@@ -1,14 +1,13 @@
-import { sql, count, desc, eq } from "drizzle-orm";
+import { sql, count, eq } from "drizzle-orm";
 import db, { contacts, notifications } from ".";
 
 export const getContactsCount = db.select({ count: count() }).from(contacts).prepare("getContactsCountPrepared");
 
-export const getNotifications = db
-  .select()
+export const getNotificationsCount = db
+  .select({ count: count() })
   .from(notifications)
   .where(eq(notifications.dismissed, false))
-  .orderBy(desc(notifications.createdAt))
-  .prepare("getNotificationsPrepared");
+  .prepare("getNotificationsCountPrepared");
 
 export const dismissNotification = db
   .update(notifications)
