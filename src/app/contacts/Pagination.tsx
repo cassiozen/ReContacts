@@ -80,7 +80,7 @@ export default function Pagination({
   return (
     <div className="flex items-center justify-between rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 px-4 py-3 mt-2 w-full">
       <div className="flex flex-1 items-center justify-between">
-        <div className="text-sm text-gray-500 dark:text-gray-400 text-center">
+        <div className="text-sm text-gray-500 dark:text-gray-400 text-center" data-testid="pagination-info">
           Showing {startRecord.toLocaleString()} - {endRecord.toLocaleString()} of {totalItems.toLocaleString()} records
         </div>
         <div className="flex items-center space-x-6">
@@ -93,6 +93,7 @@ export default function Pagination({
               value={limitInput}
               disabled={isLoading}
               onChange={handleLimitChange}
+              data-testid="pagination-limit"
               className="w-16 rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 text-sm p-1"
             />
           </div>
@@ -105,7 +106,10 @@ export default function Pagination({
                 onChange={handlePageInputChange}
                 className="w-12 inline-block text-center font-medium rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:text-gray-200 text-sm p-1"
               />{" "}
-              of <span className="font-medium">{totalPages || 1}</span>
+              of{" "}
+              <span className="font-medium" data-testid="pagination-total">
+                {totalPages || 1}
+              </span>
             </span>
           </div>
 
