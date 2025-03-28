@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import db, { notifications as notificationsTable } from "@/db";
 import { desc, eq } from "drizzle-orm";
 import NotificationsList from "./NotificationsList";
