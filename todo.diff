@@ -3,7 +3,7 @@
 ! On the CSV import dialog, let the user choose between onConflictDoNothing and onConflictDoUpdate // WontDo
 
 @@ Table @@
-- Sort by first and last name columns
++ Sort by first and last name columns
 + Page number should be a text field that can be edited
 
 @@ Others @@
@@ -11,5 +11,5 @@
 + Basic UI Unit tests
 + CSV Import Unit tests
 + Table pagination Adjustments: Match width & flex with distribute space-between
-- Delivery Docs
++ Delivery Docs
 - TS error on better-queue-memmory & Readable.fromWeb(csvFile.stream())
