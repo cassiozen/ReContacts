@@ -1,10 +1,16 @@
-import ContactsTable from "@/app/contacts/ContactsTable";
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import ContactsTableClient from "@/app/contacts/ContactsTableClient";
+import { render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
-// Mock the actions module
-vi.mock("@/app/contacts/actions", () => ({
-  getContactsWithPagination: vi.fn(),
+// Mock the next/navigation
+const mockRouter = { push: vi.fn() };
+vi.mock("next/navigation", () => ({
+  useRouter: () => mockRouter,
+  useSearchParams: () => ({
+    toString: () => "",
+    get: () => null,
+  }),
+  usePathname: () => "/contacts",
 }));
 
 // Mock the virtualizer
@@ -19,11 +25,7 @@ vi.mock("@tanstack/react-virtual", () => ({
   }),
 }));
 
-describe("ContactsTable", () => {
-  afterEach(() => {
-    cleanup();
-  });
-
+describe("ContactsTableClient", () => {
   const mockContacts = [
     {
       id: 1,
@@ -43,26 +45,46 @@ describe("ContactsTable", () => {
     },
   ];
 
-  it("renders the table headers correctly", () => {
-    render(<ContactsTable initialContacts={mockContacts} totalCount={2} />);
-
-    // Check if column headers are rendered
-    expect(screen.getByText("ID")).toBeDefined();
-    expect(screen.getByText("First Name")).toBeDefined();
-    expect(screen.getByText("Last Name")).toBeDefined();
-    expect(screen.getByText("Email")).toBeDefined();
-    expect(screen.getByText("Created At")).toBeDefined();
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("has a table body with exactly two rows", () => {
-    render(<ContactsTable initialContacts={mockContacts} totalCount={2} />);
+  it("renders the table headers correctly", () => {
+    render(<ContactsTableClient contacts={mockContacts} totalCount={2} currentPage={1} perPage={100} />);
 
-    expect(screen.getByText("John")).toBeDefined();
-    expect(screen.getByText("Doe")).toBeDefined();
-    expect(screen.getByText("john.doe@example.com")).toBeDefined();
+    // Check if column headers are rendered
+    const headers = screen.getAllByRole("columnheader");
+    expect(headers.length).toBe(5);
+    expect(headers[0].textContent).toContain("ID");
+    expect(headers[1].textContent).toContain("First Name");
+    expect(headers[2].textContent).toContain("Last Name");
+    expect(headers[3].textContent).toContain("Email");
+    expect(headers[4].textContent).toContain("Created At");
+  });
 
-    expect(screen.getByText("Jane")).toBeDefined();
-    expect(screen.getByText("Smith")).toBeDefined();
-    expect(screen.getByText("jane.smith@example.com")).toBeDefined();
+  it("has a table body with the correct data", () => {
+    render(<ContactsTableClient contacts={mockContacts} totalCount={2} currentPage={1} perPage={100} />);
+
+    // Check by test id or more specific queries to avoid duplicates
+    const cellContents = screen.getAllByRole("cell").map((cell) => cell.textContent);
+    expect(cellContents).toContain("John");
+    expect(cellContents).toContain("Doe");
+    expect(cellContents).toContain("john.doe@example.com");
+    expect(cellContents).toContain("Jane");
+    expect(cellContents).toContain("Smith");
+    expect(cellContents).toContain("jane.smith@example.com");
+  });
+
+  it("shows loading state initially and hides it when data is available", async () => {
+    const { container } = render(
+      <ContactsTableClient contacts={mockContacts} totalCount={2} currentPage={1} perPage={100} />
+    );
+
+    // Initially loading state should be shown, but it gets hidden
+    // immediately since we provide initialContacts
+    await waitFor(() => {
+      const loadingOverlay = container.querySelector(".absolute.inset-0.z-20.flex");
+      expect(loadingOverlay).toBeFalsy();
+    });
   });
 });

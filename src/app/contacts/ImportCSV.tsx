@@ -4,6 +4,7 @@ import { Button, Select, showSuccessToast } from "@/components/ui";
 import Link from "next/link";
 import Papa from "papaparse";
 import { useRef, useState } from "react";
+import { useFormStatus } from "react-dom";
 import { importContacts } from "./actions";
 
 type FieldMapping = {
@@ -14,10 +15,38 @@ type FieldMapping = {
 
 // Common field names for automatic column matching
 const commonFieldNames = {
-  firstName: ["first name", "firstname", "first_name", "first", "given name", "givenname", "forename", "name"],
-  lastName: ["last name", "lastname", "last_name", "last", "surname", "family name", "familyname"],
+  firstName: [
+    "first name",
+    "firstname",
+    "first_name",
+    "first",
+    "given name",
+    "givenname",
+    "forename",
+    "name",
+  ],
+  lastName: [
+    "last name",
+    "lastname",
+    "last_name",
+    "last",
+    "surname",
+    "family name",
+    "familyname",
+  ],
   email: ["email", "email address", "emailaddress", "e-mail"],
 };
+
+// Button that uses the form status to automatically show loading state
+function SubmitButton({ disabled = false }: { disabled?: boolean }) {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button type="submit" disabled={disabled || pending}>
+      {pending ? "Importing..." : "Import"}
+    </Button>
+  );
+}
 
 export default function ImportCSV() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -92,7 +121,10 @@ export default function ImportCSV() {
     }
   };
 
-  const handleMappingChange = (field: keyof FieldMapping, value: string | null) => {
+  const handleMappingChange = (
+    field: keyof FieldMapping,
+    value: string | null,
+  ) => {
     setFieldMapping((prev) => ({
       ...prev,
       [field]: value,
@@ -100,7 +132,11 @@ export default function ImportCSV() {
   };
 
   const areHeadersMapped = () => {
-    return fieldMapping.firstName !== null && fieldMapping.lastName !== null && fieldMapping.email !== null;
+    return (
+      fieldMapping.firstName !== null &&
+      fieldMapping.lastName !== null &&
+      fieldMapping.email !== null
+    );
   };
 
   const handleFormSubmit = async (formData: FormData) => {
@@ -114,7 +150,10 @@ export default function ImportCSV() {
       footer: (
         <>
           Check the{" "}
-          <Link href="/notifications" className="font-medium text-blue-600 hover:underline dark:text-blue-400">
+          <Link
+            href="/notifications"
+            className="font-medium text-blue-600 hover:underline dark:text-blue-400"
+          >
             notifications page
           </Link>{" "}
           for updates on the import process.
@@ -135,7 +174,14 @@ export default function ImportCSV() {
 
       <form action={handleFormSubmit}>
         {/* Hidden file input triggered by the button */}
-        <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
+        <input
+          type="file"
+          name="csv"
+          ref={fileInputRef}
+          accept=".csv"
+          onChange={handleFileChange}
+          className="hidden"
+        />
 
         {isDialogOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
@@ -156,8 +202,16 @@ export default function ImportCSV() {
                         name="firstName"
                         label="First Name"
                         value={fieldMapping.firstName || ""}
-                        onChange={(e) => handleMappingChange("firstName", e.target.value || null)}
-                        options={parsedHeaders.map((header) => ({ value: header, label: header }))}
+                        onChange={(e) =>
+                          handleMappingChange(
+                            "firstName",
+                            e.target.value || null,
+                          )
+                        }
+                        options={parsedHeaders.map((header) => ({
+                          value: header,
+                          label: header,
+                        }))}
                         required
                         placeholder="Select column"
                       />
@@ -166,8 +220,16 @@ export default function ImportCSV() {
                         name="lastName"
                         label="Last Name"
                         value={fieldMapping.lastName || ""}
-                        onChange={(e) => handleMappingChange("lastName", e.target.value || null)}
-                        options={parsedHeaders.map((header) => ({ value: header, label: header }))}
+                        onChange={(e) =>
+                          handleMappingChange(
+                            "lastName",
+                            e.target.value || null,
+                          )
+                        }
+                        options={parsedHeaders.map((header) => ({
+                          value: header,
+                          label: header,
+                        }))}
                         required
                         placeholder="Select column"
                       />
@@ -176,8 +238,13 @@ export default function ImportCSV() {
                         name="email"
                         label="Email"
                         value={fieldMapping.email || ""}
-                        onChange={(e) => handleMappingChange("email", e.target.value || null)}
-                        options={parsedHeaders.map((header) => ({ value: header, label: header }))}
+                        onChange={(e) =>
+                          handleMappingChange("email", e.target.value || null)
+                        }
+                        options={parsedHeaders.map((header) => ({
+                          value: header,
+                          label: header,
+                        }))}
                         required
                         placeholder="Select column"
                       />
@@ -190,9 +257,7 @@ export default function ImportCSV() {
                 <Button type="button" variant="secondary" onClick={handleClose}>
                   Cancel
                 </Button>
-                <Button type="submit" disabled={!areHeadersMapped()}>
-                  Import
-                </Button>
+                <SubmitButton disabled={!areHeadersMapped()} />
               </div>
             </div>
           </div>
