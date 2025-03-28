@@ -1,4 +1,4 @@
-import { sql, count, eq } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import db, { contacts, notifications } from ".";
 
 export const getContactsCount = db.select({ count: count() }).from(contacts).prepare("getContactsCountPrepared");

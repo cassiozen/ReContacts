@@ -1,6 +1,6 @@
-import { render, fireEvent, screen, cleanup } from "@testing-library/react";
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import Pagination from "@/app/contacts/Pagination";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("Pagination", () => {
   const mockProps = {

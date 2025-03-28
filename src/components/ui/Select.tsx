@@ -26,7 +26,7 @@ export function Select({
 }: SelectProps) {
   return (
     <div>
-      <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
+      <label className="mb-1 block text-sm font-medium text-gray-700 dark:text-gray-300">
         {label}
 
         <select
@@ -34,7 +34,7 @@ export function Select({
           value={value}
           onChange={onChange}
           required={required}
-          className={`w-full p-2 border rounded-md bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${className}`}
+          className={`w-full rounded-md border border-gray-300 bg-white p-2 focus:border-blue-500 focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 ${className}`}
           {...props}
         >
           <option value="" disabled>

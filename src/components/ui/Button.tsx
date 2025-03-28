@@ -22,7 +22,8 @@ export function Button({
 }: ButtonProps) {
   const styles = {
     primary: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md",
-    secondary: "border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300",
+    secondary:
+      "border border-gray-300 dark:border-gray-600 px-4 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300",
   };
 
   return (
@@ -30,7 +31,7 @@ export function Button({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`${styles[variant]} ${disabled ? "opacity-50 cursor-not-allowed" : ""} ${className}`}
+      className={`${styles[variant]} ${disabled ? "cursor-not-allowed opacity-50" : ""} ${className}`}
       {...props}
     >
       {children}

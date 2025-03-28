@@ -8,7 +8,7 @@ export default async function Page() {
   const { contacts, totalCount, limit, offset } = await getContactsWithPagination(DEFAULT_LIMIT, 0);
   return (
     <div className="container mx-auto py-10">
-      <div className="max-w-4xl mx-auto mb-6 flex justify-between items-center">
+      <div className="mx-auto mb-6 flex max-w-4xl items-center justify-between">
         <h1 className="text-2xl font-bold">Contacts List</h1>
         <ImportCSV />
       </div>

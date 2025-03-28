@@ -1,11 +1,11 @@
 "use server";
 
-import { Readable } from "node:stream";
+import db, { Contact, contacts } from "@/db";
 import * as preparedStatements from "@/db/preparedStatements";
 import { insertCSVQueue } from "@/queue";
-import db, { contacts, Contact } from "@/db";
-import { desc } from "drizzle-orm";
 import { type SortingState } from "@tanstack/react-table";
+import { desc } from "drizzle-orm";
+import { Readable } from "node:stream";
 
 export async function getContactsWithPagination(limit: number = 100, offset: number = 0, sorting?: SortingState) {
   const query = db.select().from(contacts);

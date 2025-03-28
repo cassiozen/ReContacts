@@ -1,6 +1,6 @@
-import { vi, describe, it, expect, beforeEach, MockInstance } from "vitest";
 import { importContacts } from "@/app/contacts/actions";
 import { insertCSVQueue } from "@/queue";
+import { beforeEach, describe, expect, it, MockInstance, vi } from "vitest";
 
 // Mock Drizzle ORM and database instance
 vi.mock("drizzle-orm");

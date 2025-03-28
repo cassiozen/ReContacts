@@ -1,6 +1,6 @@
-import { render, screen, cleanup } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
 import ContactsTable from "@/app/contacts/ContactsTable";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 // Mock the actions module
 vi.mock("@/app/contacts/actions", () => ({

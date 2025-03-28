@@ -34,11 +34,11 @@ export function showSuccessToast({ header, description, footer, options }: Succe
 
   return toast(
     <div className="flex items-start">
-      <div className="shrink-0 mr-3 text-green-500">
+      <div className="mr-3 shrink-0 text-green-500">
         <SuccessIcon />
       </div>
       <div>
-        <h2 className="font-semibold text-lg">{header}</h2>
+        <h2 className="text-lg font-semibold">{header}</h2>
         <div className="mt-2 text-sm leading-relaxed">{description}</div>
         {footer && <div className="mt-2 text-sm">{footer}</div>}
       </div>

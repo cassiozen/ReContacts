@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef } from "react";
-import Papa from "papaparse";
-import Link from "next/link";
-import { importContacts } from "./actions";
 import { Button, Select, showSuccessToast } from "@/components/ui";
+import Link from "next/link";
+import Papa from "papaparse";
+import { useRef, useState } from "react";
+import { importContacts } from "./actions";
 
 type FieldMapping = {
   firstName: string | null;
@@ -114,7 +114,7 @@ export default function ImportCSV() {
       footer: (
         <>
           Check the{" "}
-          <Link href="/notifications" className="text-blue-600 dark:text-blue-400 hover:underline font-medium">
+          <Link href="/notifications" className="font-medium text-blue-600 hover:underline dark:text-blue-400">
             notifications page
           </Link>{" "}
           for updates on the import process.
@@ -138,20 +138,20 @@ export default function ImportCSV() {
         <input type="file" name="csv" ref={fileInputRef} accept=".csv" onChange={handleFileChange} className="hidden" />
 
         {isDialogOpen && (
-          <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full shadow-xl">
-              <h3 className="text-lg font-semibold mb-4 border-b pb-2 text-gray-800 dark:text-gray-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
+            <div className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-xl dark:bg-gray-800">
+              <h3 className="mb-4 border-b pb-2 text-lg font-semibold text-gray-800 dark:text-gray-200">
                 Import Contacts from CSV
               </h3>
 
               {parsedHeaders && (
                 <div className="mb-6">
-                  <h4 className="font-medium mb-2 text-gray-700 dark:text-gray-300">
+                  <h4 className="mb-2 font-medium text-gray-700 dark:text-gray-300">
                     Map the contact fields to the CSV columns
                   </h4>
 
-                  <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg border border-gray-200 dark:border-gray-600">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-gray-600 dark:bg-gray-700">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                       <Select
                         name="firstName"
                         label="First Name"

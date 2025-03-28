@@ -1,5 +1,6 @@
 "use client";
 
+import type { Contact } from "@/db";
 import {
   createColumnHelper,
   flexRender,
@@ -11,7 +12,6 @@ import {
 } from "@tanstack/react-table";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useRef, useState } from "react";
-import type { Contact } from "@/db";
 import Pagination from "./Pagination";
 import { getContactsWithPagination } from "./actions";
 
@@ -143,20 +143,20 @@ export default function ContactsTable({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
+    <div className="mx-auto w-full max-w-4xl">
       <div
-        className="rounded-md border border-gray-200 dark:border-gray-700 overflow-x-auto h-[600px] w-full relative"
+        className="relative h-[600px] w-full overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700"
         ref={tableContainerRef}
       >
         {/* Loading overlay */}
         {loading && (
-          <div className="absolute inset-0 bg-white/50 dark:bg-gray-800/50 flex items-center justify-center z-20">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/50 dark:bg-gray-800/50">
+            <div className="h-8 w-8 animate-spin rounded-full border-t-2 border-b-2 border-gray-900 dark:border-gray-100"></div>
           </div>
         )}
 
-        <table className="w-full grid divide-y divide-gray-200 dark:divide-gray-700">
-          <thead className="bg-gray-50 dark:bg-gray-800 sticky top-0 z-10">
+        <table className="grid w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead className="sticky top-0 z-10 bg-gray-50 dark:bg-gray-800">
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -164,19 +164,19 @@ export default function ContactsTable({
                     key={header.id}
                     scope="col"
                     style={{ width: header.getSize() }}
-                    className={`px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider ${
+                    className={`px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300 ${
                       header.column.getCanSort() ? "cursor-pointer" : ""
                     }`}
                     onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}
                   >
-                    <div className="flex items-center space-x-1 select-none group">
+                    <div className="group flex items-center space-x-1 select-none">
                       <span>{flexRender(header.column.columnDef.header, header.getContext())}</span>
                       {header.column.getCanSort() && (
                         <span className="ml-1 text-gray-400">
                           {header.column.getIsSorted() ? (
                             { asc: " ▲", desc: " ▼" }[header.column.getIsSorted() as string]
                           ) : (
-                            <span className="opacity-0 group-hover:opacity-50 transition-opacity"> ▲</span>
+                            <span className="opacity-0 transition-opacity group-hover:opacity-50"> ▲</span>
                           )}
                         </span>
                       )}
@@ -193,7 +193,7 @@ export default function ContactsTable({
               height: `${rowVirtualizer.getTotalSize()}px`, //tells scrollbar how big the table is
               position: "relative",
             }}
-            className="bg-white dark:bg-gray-900 divide-y divide-gray-200 dark:divide-gray-700"
+            className="divide-y divide-gray-200 bg-white dark:divide-gray-700 dark:bg-gray-900"
           >
             {rowVirtualizer.getVirtualItems().map((virtualRow) => {
               const row = rows[virtualRow.index] as Row<Contact>;
@@ -218,7 +218,7 @@ export default function ContactsTable({
                         width: cell.column.getSize(),
                         maxWidth: cell.column.getSize(),
                       }}
-                      className="px-6 py-4 whitespace-nowrap truncate text-sm text-gray-500 dark:text-gray-300"
+                      className="truncate px-6 py-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-300"
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>

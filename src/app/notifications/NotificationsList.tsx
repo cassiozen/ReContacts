@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect } from "react";
-import type { notifications } from "@/db/schema";
-import { dismissNotification } from "./actions";
 import { Button } from "@/components/ui";
+import type { notifications } from "@/db/schema";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { dismissNotification } from "./actions";
 
 type NotificationsListProps = {
   notifications: (typeof notifications.$inferSelect)[];
@@ -38,8 +38,8 @@ export default function NotificationsList({ notifications: notifications }: Noti
   return (
     <ul className="space-y-4">
       {notifications.map((notification) => (
-        <li key={notification.id} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow dark:shadow-gray-700/30">
-          <div className="flex justify-between items-start">
+        <li key={notification.id} className="rounded-lg bg-white p-4 shadow dark:bg-gray-800 dark:shadow-gray-700/30">
+          <div className="flex items-start justify-between">
             <div>
               <p className="font-medium dark:text-gray-100">{notification.content}</p>
               <p className="text-sm text-gray-500 dark:text-gray-400">
