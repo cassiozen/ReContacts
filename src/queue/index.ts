@@ -1,6 +1,7 @@
 import db, { contacts, notifications } from "@/db";
 import { getErrorMessage } from "@/lib/errorMessage";
 import Queue from "better-queue";
+// @ts-expect-error: Simple in-memory queue without TS declaration (becase it doesn't expose any API)
 import MemoryStore from "better-queue-memory";
 import { sql } from "drizzle-orm";
 import Papa from "papaparse";
@@ -15,7 +16,9 @@ type InsertCSVTask = {
 
 export const insertCSVQueue = new Queue<InsertCSVTask, boolean>(
   async (task: InsertCSVTask, cb) => {
-    await db.insert(notifications).values({ type: "CSV_import", content: `Started processing ${task.id}` });
+    await db
+      .insert(notifications)
+      .values({ type: "CSV_import", content: `Started processing ${task.id}` });
     let insertionsCount = 0;
 
     Papa.parse<Record<PropertyKey, string>>(task.csv, {
@@ -54,7 +57,10 @@ export const insertCSVQueue = new Queue<InsertCSVTask, boolean>(
           // Notify user and carry on
           await db
             .insert(notifications)
-            .values({ type: "CSV_import", content: `Errors while processing ${task.id}: ${getErrorMessage(error)}` });
+            .values({
+              type: "CSV_import",
+              content: `Errors while processing ${task.id}: ${getErrorMessage(error)}`,
+            });
         } finally {
           parser.resume();
         }
@@ -80,5 +86,5 @@ export const insertCSVQueue = new Queue<InsertCSVTask, boolean>(
   },
   {
     store: new MemoryStore(),
-  }
+  },
 );

@@ -6,8 +6,13 @@ import { insertCSVQueue } from "@/queue";
 import { type SortingState } from "@tanstack/react-table";
 import { desc } from "drizzle-orm";
 import { Readable } from "node:stream";
+import type { ReadableStream } from "node:stream/web";
 
-export async function getContactsWithPagination(limit: number = 100, offset: number = 0, sorting?: SortingState) {
+export async function getContactsWithPagination(
+  limit: number = 250,
+  offset: number = 0,
+  sorting?: SortingState,
+) {
   const query = db.select().from(contacts);
 
   // Apply sorting if provided - only allow sorting by ID, firstName, and lastName
@@ -30,7 +35,10 @@ export async function getContactsWithPagination(limit: number = 100, offset: num
   query.limit(limit).offset(offset);
 
   // Execute the query and get the count
-  const [contactsResult, countResult] = await Promise.all([query, preparedStatements.getContactsCount.execute()]);
+  const [contactsResult, countResult] = await Promise.all([
+    query,
+    preparedStatements.getContactsCount.execute(),
+  ]);
 
   return {
     contacts: contactsResult,
@@ -42,7 +50,10 @@ export async function getContactsWithPagination(limit: number = 100, offset: num
 
 export async function importContacts(formData: FormData) {
   const csvFile = formData.get("csv") as File;
-  const nodeStream = Readable.fromWeb(csvFile.stream());
+  // Type assertion needed because csvFile.stream() returns a browser-compatible ReadableStream,
+  // while Readable.fromWeb() expects Node's ReadableStream implementation.
+  const webStream = csvFile.stream() as ReadableStream<Uint8Array>;
+  const nodeStream = Readable.fromWeb(webStream);
 
   insertCSVQueue.push({
     id: csvFile.name,
