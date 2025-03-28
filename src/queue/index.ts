@@ -63,7 +63,7 @@ export const insertCSVQueue = new Queue<InsertCSVTask, boolean>(
       complete: async () => {
         await db.insert(notifications).values({
           type: "CSV_import",
-          content: `Finished processing ${task.id}: ${insertionsCount} contacts added.`,
+          content: `Finished processing ${task.id}: ${insertionsCount} contacts upserted.`,
         });
         cb(undefined, true);
       },
