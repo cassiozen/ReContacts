@@ -145,7 +145,7 @@ export default function ContactsTableClient({
   return (
     <div className="mx-auto w-full max-w-4xl">
       <div
-        className="relative h-[600px] w-full overflow-x-auto rounded-md border border-gray-200 dark:border-gray-700"
+        className="relative h-[450px] w-full overflow-x-auto rounded-md border border-gray-200 sm:h-[600px] dark:border-gray-700"
         ref={tableContainerRef}
       >
         {isPending && (
@@ -167,7 +167,7 @@ export default function ContactsTableClient({
                     key={header.id}
                     scope="col"
                     style={{ width: header.getSize() }}
-                    className={`px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase dark:text-gray-300 ${
+                    className={`px-6 py-2 text-left text-xs font-medium tracking-wider text-gray-500 uppercase sm:py-3 dark:text-gray-300 ${
                       header.column.getCanSort() ? "cursor-pointer" : ""
                     }`}
                     onClick={header.column.getCanSort() ? header.column.getToggleSortingHandler() : undefined}

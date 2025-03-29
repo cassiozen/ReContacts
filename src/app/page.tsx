@@ -13,8 +13,8 @@ export default async function Page(props: { searchParams: SearchParams }) {
   const order = (searchParams.order as string) === "desc" ? "desc" : "asc"; // Makes sure it's either one or the other
 
   return (
-    <div className="container mx-auto py-10">
-      <div className="mx-auto mb-6 flex max-w-4xl items-center justify-between">
+    <div className="container mx-auto px-4 py-4 sm:py-10">
+      <div className="mx-auto mb-4 flex max-w-4xl flex-wrap items-center justify-between gap-2">
         <h1 className="text-2xl font-bold">Contacts List</h1>
         <ImportCSV />
       </div>

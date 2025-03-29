@@ -79,38 +79,40 @@ export default function Pagination({
 
   return (
     <div className="mt-2 flex w-full items-center justify-between rounded-md border border-gray-200 bg-white px-4 py-3 dark:border-gray-700 dark:bg-gray-800">
-      <div className="flex flex-1 items-center justify-between">
+      <div className="flex flex-1 flex-col items-center justify-between space-y-3 md:flex-row md:space-y-0">
         <div className="text-center text-sm text-gray-500 dark:text-gray-400" data-testid="pagination-info">
           Showing {startRecord.toLocaleString()} - {endRecord.toLocaleString()} of {totalItems.toLocaleString()} records
         </div>
-        <div className="flex items-center space-x-6">
-          <div className="flex items-center">
-            <span className="text-sm whitespace-nowrap text-gray-700 dark:text-gray-300">Per Page:</span>{" "}
-            <input
-              type="number"
-              min="10"
-              step="10"
-              value={limitInput}
-              disabled={isLoading}
-              onChange={handleLimitChange}
-              data-testid="pagination-limit"
-              className="w-16 rounded-md border border-gray-300 bg-white p-1 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-            />
-          </div>
-          <div>
-            <span className="text-sm text-gray-700 dark:text-gray-300">
-              Page{" "}
+        <div className="flex flex-col items-center space-y-3 md:flex-row md:items-center md:space-y-0 md:space-x-6">
+          <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center">
+              <span className="text-sm whitespace-nowrap text-gray-700 dark:text-gray-300">Per Page:</span>{" "}
               <input
-                type="text"
-                value={pageInput}
-                onChange={handlePageInputChange}
-                className="inline-block w-12 rounded-md border border-gray-300 bg-white p-1 text-center text-sm font-medium shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
-              />{" "}
-              of{" "}
-              <span className="font-medium" data-testid="pagination-total">
-                {totalPages || 1}
+                type="number"
+                min="10"
+                step="10"
+                value={limitInput}
+                disabled={isLoading}
+                onChange={handleLimitChange}
+                data-testid="pagination-limit"
+                className="w-16 rounded-md border border-gray-300 bg-white p-1 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+              />
+            </div>
+            <div className="flex items-center">
+              <span className="text-sm text-gray-700 dark:text-gray-300">
+                Page{" "}
+                <input
+                  type="text"
+                  value={pageInput}
+                  onChange={handlePageInputChange}
+                  className="inline-block w-12 rounded-md border border-gray-300 bg-white p-1 text-center text-sm font-medium shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                />{" "}
+                of{" "}
+                <span className="font-medium" data-testid="pagination-total">
+                  {totalPages || 1}
+                </span>
               </span>
-            </span>
+            </div>
           </div>
 
           <nav className="inline-flex rounded-md shadow-sm" aria-label="Pagination">
