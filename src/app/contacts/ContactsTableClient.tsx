@@ -44,7 +44,7 @@ const columns = [
   columnHelper.accessor("createdAt", {
     cell: (info) => {
       const date = info.getValue();
-      return date instanceof Date ? date.toLocaleString() : "N/A";
+      return date instanceof Date ? date.toLocaleString("en-US", { timeZone: "UTC" }) : "N/A";
     },
     header: "Created At",
     size: 200,
